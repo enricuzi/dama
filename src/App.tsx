@@ -39,7 +39,7 @@ function App() {
       { gameState ? <div>
         <fieldset id={'master'}>
           <legend>Master</legend>
-          <div className={'client-container'}>{ createAppClient().master }</div>
+          <div className={'client-container'}>{ createAppClient()[Color.WHITE] }</div>
         </fieldset>
       </div> : null}
     </div>

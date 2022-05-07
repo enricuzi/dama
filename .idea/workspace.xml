@@ -3,6 +3,10 @@
   <component name="ChangeListManager">
     <list default="true" id="856301f4-83c7-4a60-84ae-cc8b9fce455f" name="Changes" comment="Added turn management">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/phases/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/phases/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/client/turn/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/turn/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/type-defs.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/type-defs.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -77,7 +81,7 @@
       <workItem from="1651576286912" duration="25206000" />
       <workItem from="1651690699927" duration="5595000" />
       <workItem from="1651761586909" duration="1383000" />
-      <workItem from="1651949697922" duration="4466000" />
+      <workItem from="1651949697922" duration="6464000" />
     </task>
     <task id="LOCAL-00001" summary="Added turn management">
       <created>1651953520212</created>

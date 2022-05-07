@@ -31,11 +31,13 @@ export enum EventType {
 }
 
 export enum StageType {
-  PLAY = 'Play',
-  WAIT = 'Wait'
+  PLAY = 'Stage_Play',
+  WAIT = 'Stage_Wait'
 }
 
-export enum PhaseType {}
+export enum PhaseType {
+  PLAY = 'Phase_Play'
+}
 
 export enum MoveType {
   MOVE_PAWN = 'MovePawn',

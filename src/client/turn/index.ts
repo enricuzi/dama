@@ -1,6 +1,7 @@
-import { GameContext, GameState } from '../../type-defs'
+import { GameContext, GameState, StageType } from '../../type-defs'
 import { TurnConfig } from 'boardgame.io'
 import { useLogger } from '../../utils'
+import stages from '../stages'
 
 const { log } = useLogger('Turn')
 
@@ -13,4 +14,8 @@ export default {
   onEnd(G, ctx) {
     log('Ending turn', `player ${ctx.currentPlayer}`)
   },
+  activePlayers: {
+    currentPlayer: StageType.PLAY
+  },
+  stages
 } as TurnConfig<GameState, GameContext>
