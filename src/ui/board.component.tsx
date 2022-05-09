@@ -6,7 +6,7 @@ import { useEvents, useLogger } from '../utils'
 
 export function BoardComponent ({ boardState }: { boardState: SimpleBoard}) {
   const { log } = useLogger(BoardComponent.name)
-  const { trigger } = useEvents(BoardComponent.name)
+  const { on, trigger } = useEvents(BoardComponent.name)
 
   const getCellColor = useCallback((i: number, j: number) => {
     const isPairRow = i % 2 === 0
@@ -52,6 +52,15 @@ export function BoardComponent ({ boardState }: { boardState: SimpleBoard}) {
     })))
   }, [])
 
+  useEffect(() => {
+    on(EventType.ALLOW_MOVE_START, (cell: LinkedCell) => {
+      showMoves(cell)
+    })
+    on(EventType.ALLOW_MOVE_END, (cell: LinkedCell) => {
+      doMove(cell)
+    })
+  }, [])
+
   const availableCells = useMemo((): { cells: Array<LinkedCell>, hasToEat: boolean } => ({
     cells: [],
     hasToEat: false
@@ -73,7 +82,7 @@ export function BoardComponent ({ boardState }: { boardState: SimpleBoard}) {
   const filterOnlyEatMoves = () => {
     if (availableCells.hasToEat) {
       availableCells.cells.forEach((cell) => {
-        if (cell.status !== CellStatus.PAWN_OPPONENT && pawnToMove.fromCell && areCellsConnected(pawnToMove.fromCell, cell)) {
+        if (cell.status !== CellStatus.PAWN_OPPONENT && cellsToUpdate.fromCell && areCellsConnected(cellsToUpdate.fromCell, cell)) {
           cell.status = CellStatus.EMPTY
         }
       })
@@ -94,13 +103,13 @@ export function BoardComponent ({ boardState }: { boardState: SimpleBoard}) {
     filterOnlyEatMoves()
   }
 
-  const doPawnMove = (cell: LinkedCell) => {
-    if (pawnToMove.fromCell) {
-      pawnToMove.toCell = cell
-      log('Moving pawn', pawnToMove)
+  const doMove = (cell: LinkedCell) => {
+    if (cellsToUpdate.fromCell) {
+      cellsToUpdate.toCell = cell
+      log('Moving pawn', cellsToUpdate)
 
-      const { coords: fromCoords } = pawnToMove.fromCell
-      const { coords: toCoords } = pawnToMove.toCell
+      const { coords: fromCoords } = cellsToUpdate.fromCell
+      const { coords: toCoords } = cellsToUpdate.toCell
 
       const { pawn } = board[fromCoords[0]][fromCoords[1]]
       if (pawn) {
@@ -111,14 +120,14 @@ export function BoardComponent ({ boardState }: { boardState: SimpleBoard}) {
       }
       board[fromCoords[0]][fromCoords[1]].pawn = null
 
-      const eatCoords = pawnToMove.toEat?.coords
+      const eatCoords = cellsToUpdate.toEat?.coords
       if (eatCoords) {
         board[eatCoords[0]][eatCoords[1]].pawn = null
       }
 
       clearAvailables()
 
-      trigger(EventType.PAWN_MOVED)
+      trigger(EventType.PAWN_MOVED, cell)
     }
   }
 
@@ -132,7 +141,7 @@ export function BoardComponent ({ boardState }: { boardState: SimpleBoard}) {
             const otherCell = board[rowIndex + (rowDirection * 2)][columnIndex + (columnDirection * 2)]
             if (otherCell && !otherCell.pawn) {
               linkedCell.status = CellStatus.PAWN_OPPONENT
-              pawnToMove.toEat = linkedCell
+              cellsToUpdate.toEat = linkedCell
               otherCell.status = CellStatus.AVAILABLE
               availableCells.cells.push(otherCell)
               availableCells.hasToEat = true
@@ -146,7 +155,7 @@ export function BoardComponent ({ boardState }: { boardState: SimpleBoard}) {
     }
   }
 
-  const prepareLinkedPawnMove = (cell: LinkedCell) => {
+  const showMoves = (cell: LinkedCell) => {
     availableCells.cells.forEach((cell) => {
       cell.status = CellStatus.EMPTY
     })
@@ -158,7 +167,7 @@ export function BoardComponent ({ boardState }: { boardState: SimpleBoard}) {
     drawBoard()
   }
 
-  const pawnToMove = useMemo(() => ({
+  const cellsToUpdate = useMemo(() => ({
     fromCell: null as MaybeNull<LinkedCell>,
     toCell: null as MaybeNull<LinkedCell>,
     toEat: null as MaybeNull<LinkedCell>
@@ -166,13 +175,11 @@ export function BoardComponent ({ boardState }: { boardState: SimpleBoard}) {
 
   const onClickCell = (cell: LinkedCell) => {
     if (cell.pawn) {
-      pawnToMove.fromCell = cell
-      pawnToMove.toCell = null
-      pawnToMove.toEat = null
-      prepareLinkedPawnMove(cell)
-    } else if (cell.status === CellStatus.AVAILABLE) {
-      doPawnMove(cell)
+      cellsToUpdate.fromCell = cell
+      cellsToUpdate.toCell = null
+      cellsToUpdate.toEat = null
     }
+    trigger(EventType.CELL_CLICKED, cell)
   }
 
   return <div className={'board'}>

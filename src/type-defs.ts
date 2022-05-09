@@ -27,6 +27,8 @@ export enum EventType {
   DATA_LOADED = 'DataLoaded',
   END_TURN = 'EndTurn',
   CELL_CLICKED = 'CellClicked',
+  ALLOW_MOVE_START = 'AllowMoveStart',
+  ALLOW_MOVE_END = 'AllowMoveEnd',
   PAWN_MOVED = 'PawnMoved'
 }
 
@@ -87,7 +89,8 @@ export type LinkedCell = Cell & {
 export type SimpleBoard = Array<Array<CellStatus>>
 
 export type GameState = {
-  board: SimpleBoard
+  board: SimpleBoard,
+  turn: Color
 }
 
 export type GameContext = Ctx

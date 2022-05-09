@@ -11,7 +11,7 @@ export function CellComponent ({ cell, onClick }: { cell: Cell, onClick: Callbac
     cell.status === CellStatus.BLOCKED
       ? cell.status : cell.color
 
-  return <div className={`cell ${color}`} onClick={() => onClick()}>
+  return <div className={`cell ${color}`} onClick={() => cell.status !== CellStatus.BLOCKED && onClick()}>
     {
       cell.pawn ? <PawnComponent color={cell.pawn.color}/> : null
     }

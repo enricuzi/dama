@@ -3,15 +3,11 @@
   <component name="ChangeListManager">
     <list default="true" id="856301f4-83c7-4a60-84ae-cc8b9fce455f" name="Changes" comment="Added turn management">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/client/board/index.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/client/board/index.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/services/GameService.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/GameService.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/type-defs.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/type-defs.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ui/board.component.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/board.component.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ui/cell.component.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/cell.component.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/ui/cell.component.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/cell.component.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ui/pawn.component.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/ui/pawn.component.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/GameRules.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/GameRules.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/utils/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/utils/index.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
