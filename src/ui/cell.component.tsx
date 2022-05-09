@@ -1,11 +1,17 @@
 import React from 'react'
 import { PawnComponent } from './pawn.component'
-import { Callback, LinkedCell } from '../type-defs'
+import { Callback, Cell, CellStatus } from '../type-defs'
 import './cell.component.css'
 
-export function CellComponent ({ cell, onClick }: { cell: LinkedCell, onClick: Callback }) {
+export function CellComponent ({ cell, onClick }: { cell: Cell, onClick: Callback }) {
 
-  return <div className={`cell ${cell.color} ${cell.status}`} onClick={() => onClick()}>
+  const color =
+    cell.status === CellStatus.AVAILABLE ||
+    cell.status === CellStatus.PAWN_OPPONENT ||
+    cell.status === CellStatus.BLOCKED
+      ? cell.status : cell.color
+
+  return <div className={`cell ${color}`} onClick={() => onClick()}>
     {
       cell.pawn ? <PawnComponent color={cell.pawn.color}/> : null
     }

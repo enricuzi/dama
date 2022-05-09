@@ -4,14 +4,14 @@
     border: 1px solid black;
 }
 
-.cell.black {
+.cell.BLACK {
     background-color: black;
 }
 
-.cell.Available {
+.cell.AVAILABLE {
     background-color: greenyellow;
 }
 
-.cell.PawnOpponent {
+.cell.PAWN_OPPONENT {
     background-color: brown;
 }

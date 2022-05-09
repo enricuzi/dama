@@ -1,0 +1,109 @@
+{
+    "id": "b8e26a93-afc8-4deb-9aaa-ee771c117f6a",
+    "createdBy": "f7c2b129-8d4b-4be3-8e3f-e1ec3e9d479e",
+    "creationDate": "2022-05-07T22:57:29.750+00:00",
+    "gameEngine": "CHECKERS",
+    "privateAccessGame": false,
+    "allowedPlayers": null,
+    "gameContextHolder": {
+        "gameState": "STARTED",
+        "context": {
+            "turn": "BLACK",
+            "player1": {
+                "player": "f7c2b129-8d4b-4be3-8e3f-e1ec3e9d479e",
+                "color": "BLACK"
+            },
+            "eatenByPlayer1": 0,
+            "player2": {
+                "player": "f7c2b129-8d4b-4be3-8e3f-e1ec3e9d479e",
+                "color": "WHITE"
+            },
+            "eatenByPlayer2": 0,
+            "board": [
+                [
+                    "BLACK",
+                    "LOCKED",
+                    "BLACK",
+                    "LOCKED",
+                    "BLACK",
+                    "LOCKED",
+                    "BLACK",
+                    "LOCKED"
+                ],
+                [
+                    "LOCKED",
+                    "BLACK",
+                    "LOCKED",
+                    "BLACK",
+                    "LOCKED",
+                    "BLACK",
+                    "LOCKED",
+                    "BLACK"
+                ],
+                [
+                    "BLACK",
+                    "LOCKED",
+                    "BLACK",
+                    "LOCKED",
+                    "BLACK",
+                    "LOCKED",
+                    "BLACK",
+                    "LOCKED"
+                ],
+                [
+                    "LOCKED",
+                    "EMPTY",
+                    "LOCKED",
+                    "EMPTY",
+                    "LOCKED",
+                    "EMPTY",
+                    "LOCKED",
+                    "EMPTY"
+                ],
+                [
+                    "EMPTY",
+                    "LOCKED",
+                    "EMPTY",
+                    "LOCKED",
+                    "EMPTY",
+                    "LOCKED",
+                    "EMPTY",
+                    "LOCKED"
+                ],
+                [
+                    "LOCKED",
+                    "WHITE",
+                    "LOCKED",
+                    "WHITE",
+                    "LOCKED",
+                    "WHITE",
+                    "LOCKED",
+                    "WHITE"
+                ],
+                [
+                    "WHITE",
+                    "LOCKED",
+                    "WHITE",
+                    "LOCKED",
+                    "WHITE",
+                    "LOCKED",
+                    "WHITE",
+                    "LOCKED"
+                ],
+                [
+                    "LOCKED",
+                    "WHITE",
+                    "LOCKED",
+                    "WHITE",
+                    "LOCKED",
+                    "WHITE",
+                    "LOCKED",
+                    "WHITE"
+                ]
+            ],
+            "numberOfMoves": 0,
+            "numberOfMovesSinceLastEat": 0,
+            "checkersGameResult": "NONE"
+        }
+    }
+}

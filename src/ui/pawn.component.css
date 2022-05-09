@@ -4,10 +4,10 @@
     border-radius: 50%;
 }
 
-.pawn.black {
+.pawn.BLACK {
     background-color: #282c34;
 }
 
-.pawn.white {
+.pawn.WHITE {
     background-color: azure;
 }

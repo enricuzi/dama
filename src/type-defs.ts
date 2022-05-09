@@ -17,10 +17,10 @@ export type Coords = Array<number>
 export type UiEvent = { component: string, callback: Callback }
 
 export enum Direction {
-  TOP = 'top',
-  BOTTOM = 'bottom',
-  LEFT = 'left',
-  RIGHT = 'right'
+  TOP = -1,
+  BOTTOM = 1,
+  LEFT = -1,
+  RIGHT = 1
 }
 
 export enum EventType {
@@ -44,22 +44,23 @@ export enum MoveType {
 }
 
 export enum Color {
-  BLACK = 'black',
-  WHITE = 'white'
+  BLACK = 'BLACK',
+  WHITE = 'WHITE'
 }
 
 export type Pawn = {
-  id: number,
-  coords: Coords,
-  color: Color
+  id: string,
+  color: Color,
+  isSuperPawn?: boolean
 }
 
 export enum CellStatus {
-  NO_STATUS = 'NoStatus',
-  AVAILABLE = 'Available',
-  PAWN_PLAYER = 'PawnPlayer',
-  PAWN_OPPONENT = 'PawnOpponent',
-  PAWN_SOME = 'PawnSome'
+  WHITE = 'WHITE',
+  BLACK = 'BLACK',
+  EMPTY = 'EMPTY',
+  BLOCKED = 'LOCKED',
+  AVAILABLE = 'AVAILABLE',
+  PAWN_OPPONENT = 'PAWN_OPPONENT'
 }
 
 export type Cell = {
@@ -67,7 +68,7 @@ export type Cell = {
   coords: Coords,
   status: CellStatus
   color: Color,
-  pawn: MaybeExists<Pawn>
+  pawn: MaybeExists<Pawn>,
 }
 
 export type LinkedCell = Cell & {
@@ -83,11 +84,10 @@ export type LinkedCell = Cell & {
   }
 }
 
+export type SimpleBoard = Array<Array<CellStatus>>
+
 export type GameState = {
-  pawns: {
-    [Color.BLACK]: Array<Pawn>
-    [Color.WHITE]: Array<Pawn>
-  }
+  board: SimpleBoard
 }
 
 export type GameContext = Ctx

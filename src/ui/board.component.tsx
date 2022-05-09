@@ -1,26 +1,71 @@
-import React, { useMemo, useState } from 'react'
-import { CellStatus, Direction, EventType, LinkedCell, MaybeExists, MaybeNull } from '../type-defs'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { CellStatus, Color, Direction, EventType, LinkedCell, MaybeExists, MaybeNull, SimpleBoard } from '../type-defs'
 import { CellComponent } from './cell.component'
 import './board.component.css'
 import { useEvents, useLogger } from '../utils'
-import { areCellsConnected } from '../utils/GameRules'
 
-export function BoardComponent ({ boardState }: { boardState: Array<Array<LinkedCell>>}) {
+export function BoardComponent ({ boardState }: { boardState: SimpleBoard}) {
   const { log } = useLogger(BoardComponent.name)
   const { trigger } = useEvents(BoardComponent.name)
 
-  const [board, setBoard] = useState(boardState)
+  const getCellColor = useCallback((i: number, j: number) => {
+    const isPairRow = i % 2 === 0
+    const isPairCell = j % 2 === 0
+    return (isPairRow && !isPairCell) || (!isPairRow && isPairCell) ? Color.WHITE : Color.BLACK
+  }, [])
+
+  const [board, setBoard] = useState(boardState.map((rowStatus, rowIndex) => rowStatus.map((cellStatus, cellIndex) => {
+    const pawn = cellStatus === CellStatus.BLACK || cellStatus === CellStatus.WHITE ? {
+      id: `pawn_${rowIndex}-${cellIndex}`,
+      color: cellStatus === CellStatus.BLACK ? Color.BLACK : Color.WHITE,
+      isSuperPawn: false
+    } : null
+    const cell: LinkedCell = {
+      id: `cell_${rowIndex}-${cellIndex}`,
+      coords: [rowIndex, cellIndex],
+      color: getCellColor(rowIndex, cellIndex),
+      status: cellStatus,
+      pawn,
+      cells: {
+        top: {
+          left: null,
+          right: null
+        },
+        bottom: {
+          left: null,
+          right: null
+        }
+      }
+    }
+    return cell
+  })))
+
+  useEffect(() => {
+    setBoard(board.map((row, rowIndex) => row.map((cell, cellIndex) => {
+      const prevRow = board[rowIndex - 1]
+      const nextRow = board[rowIndex + 1]
+      cell.cells.top.left = prevRow ? prevRow[cellIndex - 1] : null
+      cell.cells.top.right = prevRow ? prevRow[cellIndex + 1] : null
+      cell.cells.bottom.left = nextRow ? nextRow[cellIndex - 1] : null
+      cell.cells.bottom.right = nextRow ? nextRow[cellIndex + 1] : null
+      return cell
+    })))
+  }, [])
 
   const availableCells = useMemo((): { cells: Array<LinkedCell>, hasToEat: boolean } => ({
     cells: [],
     hasToEat: false
   }), [])
 
+  const areCellsConnected = useCallback((sourceCell: LinkedCell, targetCell: LinkedCell) => {
+    return sourceCell.cells.top.left === targetCell || sourceCell.cells.top.right === targetCell || sourceCell.cells.bottom.left === targetCell || sourceCell.cells.bottom.right === targetCell
+  }, [board])
+
   const drawBoard = () => setBoard(board.map((row) => row))
 
-  const clearCellStatuses = () => {
+  const clearAvailables = () => {
     availableCells.cells.forEach((cell) => {
-      cell.status = CellStatus.NO_STATUS
+      cell.status = CellStatus.EMPTY
     })
     drawBoard()
   }
@@ -29,14 +74,14 @@ export function BoardComponent ({ boardState }: { boardState: Array<Array<Linked
     if (availableCells.hasToEat) {
       availableCells.cells.forEach((cell) => {
         if (cell.status !== CellStatus.PAWN_OPPONENT && pawnToMove.fromCell && areCellsConnected(pawnToMove.fromCell, cell)) {
-          cell.status = CellStatus.NO_STATUS
+          cell.status = CellStatus.EMPTY
         }
       })
     }
   }
 
   const updateAvailableCells = (cell: LinkedCell) => {
-    const checkCell = checkLinkedCell(cell)
+    const checkCell = checkMoves(cell)
     const topLeft = checkCell(Direction.TOP, Direction.LEFT)
     const topRight = checkCell(Direction.TOP, Direction.RIGHT)
     const bottomLeft = checkCell(Direction.BOTTOM, Direction.LEFT)
@@ -62,7 +107,6 @@ export function BoardComponent ({ boardState }: { boardState: Array<Array<Linked
         board[toCoords[0]][toCoords[1]].pawn = {
           id: pawn.id,
           color: pawn.color,
-          coords: toCoords
         }
       }
       board[fromCoords[0]][fromCoords[1]].pawn = null
@@ -72,24 +116,25 @@ export function BoardComponent ({ boardState }: { boardState: Array<Array<Linked
         board[eatCoords[0]][eatCoords[1]].pawn = null
       }
 
-      clearCellStatuses()
+      clearAvailables()
 
       trigger(EventType.PAWN_MOVED)
     }
   }
 
-  const checkLinkedCell = (cell: LinkedCell) => (rowDirection: Direction.TOP | Direction.BOTTOM, columnDirection: Direction.LEFT | Direction.RIGHT): MaybeExists<LinkedCell> => {
+  const checkMoves = (cell: LinkedCell) => (rowDirection: Direction, columnDirection: Direction): MaybeExists<LinkedCell> => {
     if (cell.pawn) {
-      const linkedCell = cell.cells[rowDirection][columnDirection]
+      const { coords: [rowIndex, columnIndex] } = cell
+      const linkedCell = board[rowIndex + rowDirection][columnIndex + columnDirection]
       if (linkedCell) {
         if (linkedCell.pawn) {
           if (linkedCell.pawn.color !== cell.pawn.color) {
-            const otherLinkedCell = linkedCell.cells[rowDirection][columnDirection]
-            if (otherLinkedCell && !otherLinkedCell.pawn) {
+            const otherCell = board[rowIndex + (rowDirection * 2)][columnIndex + (columnDirection * 2)]
+            if (otherCell && !otherCell.pawn) {
               linkedCell.status = CellStatus.PAWN_OPPONENT
               pawnToMove.toEat = linkedCell
-              otherLinkedCell.status = CellStatus.AVAILABLE
-              availableCells.cells.push(otherLinkedCell)
+              otherCell.status = CellStatus.AVAILABLE
+              availableCells.cells.push(otherCell)
               availableCells.hasToEat = true
             }
           }
@@ -103,7 +148,7 @@ export function BoardComponent ({ boardState }: { boardState: Array<Array<Linked
 
   const prepareLinkedPawnMove = (cell: LinkedCell) => {
     availableCells.cells.forEach((cell) => {
-      cell.status = CellStatus.NO_STATUS
+      cell.status = CellStatus.EMPTY
     })
     availableCells.cells.length = 0
     availableCells.hasToEat = false
