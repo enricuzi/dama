@@ -40,7 +40,7 @@ export const BoardController = (
         trigger(EventType.ALLOW_MOVE_END, cell)
       }
     })
-  })
+  }, [])
 
   return <div>
     { G.board.length ? <BoardComponent boardState={G.board}/> : <span>Loading board...</span> }
