@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { CellStatus, Color, Direction, EventType, LinkedCell, MaybeExists, MaybeNull, SimpleBoard } from '../type-defs'
+import { CellStatus, Color, Direction, EventType, LinkedCell, MaybeExists, MaybeNull, Board } from '../type-defs'
 import { CellComponent } from './cell.component'
 import './board.component.css'
 import { useEvents, useLogger } from '../utils'
 
-export function BoardComponent ({ boardState }: { boardState: SimpleBoard}) {
+export function BoardComponent ({ boardState }: { boardState: Board}) {
   const { log } = useLogger(BoardComponent.name)
   const { on, trigger } = useEvents(BoardComponent.name)
 
@@ -54,6 +54,11 @@ export function BoardComponent ({ boardState }: { boardState: SimpleBoard}) {
 
   useEffect(() => {
     on(EventType.ALLOW_MOVE_START, (cell: LinkedCell) => {
+      if (cell.pawn) {
+        cellsToUpdate.fromCell = cell
+        cellsToUpdate.toCell = null
+        cellsToUpdate.toEat = null
+      }
       showMoves(cell)
     })
     on(EventType.ALLOW_MOVE_END, (cell: LinkedCell) => {
@@ -174,11 +179,6 @@ export function BoardComponent ({ boardState }: { boardState: SimpleBoard}) {
   }), [])
 
   const onClickCell = (cell: LinkedCell) => {
-    if (cell.pawn) {
-      cellsToUpdate.fromCell = cell
-      cellsToUpdate.toCell = null
-      cellsToUpdate.toEat = null
-    }
     trigger(EventType.CELL_CLICKED, cell)
   }
 

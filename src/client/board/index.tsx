@@ -8,7 +8,7 @@ import {
   GameState,
   LinkedCell,
   MaybeNull,
-  MoveType,
+  MoveType, StageType,
 } from '../../type-defs'
 import { useEvents, useLogger } from '../../utils'
 import { BoardComponent } from '../../ui/board.component'
@@ -36,6 +36,7 @@ export const BoardController = (
         trigger(EventType.ALLOW_MOVE_START, cell)
       }
       if (cell.status === CellStatus.AVAILABLE) {
+        events.setStage && events.setStage(StageType.MOVE_PAWN)
         trigger(EventType.ALLOW_MOVE_END, cell)
       }
     })

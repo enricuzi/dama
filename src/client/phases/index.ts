@@ -1,15 +1,15 @@
 import { GameContext, GameState, MoveType, PhaseType } from '../../type-defs'
 import { PhaseMap } from 'boardgame.io'
-import { useLogger } from '../../utils'
 import moves from '../moves'
 
-const { log } = useLogger('Phase')
-
 export default {
-  [PhaseType.PLAY]: {
+  [PhaseType.PLAY_TURN]: {
     moves: {
       [MoveType.MOVE_PAWN]: moves[MoveType.MOVE_PAWN]
     },
     start: true
+  },
+  [PhaseType.CHOOSE_COLOR]: {
+    moves: {}
   }
 } as PhaseMap<GameState, GameContext>

@@ -7,7 +7,6 @@ const { log } = useLogger('Turn')
 
 export default {
   minMoves: 1,
-  maxMoves: 1,
   onBegin(G, ctx) {
     log('Starting turn', `player ${ctx.currentPlayer}`)
   },
@@ -15,7 +14,7 @@ export default {
     log('Ending turn', `player ${ctx.currentPlayer}`)
   },
   activePlayers: {
-    currentPlayer: StageType.PLAY
+    currentPlayer: StageType.CHOOSE_MOVE
   },
   stages
 } as TurnConfig<GameState, GameContext>

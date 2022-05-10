@@ -1,5 +1,8 @@
 import { Ctx } from 'boardgame.io'
 
+/**
+ * Common types
+ */
 export type Callback = (data?: any) => void
 
 export type MaybeNull<T> = T | null
@@ -12,17 +15,6 @@ export type MaybeEmpty<Array> = Array | []
 
 export type MaybeReturn<T> = T | void
 
-export type Coords = Array<number>
-
-export type UiEvent = { component: string, callback: Callback }
-
-export enum Direction {
-  TOP = -1,
-  BOTTOM = 1,
-  LEFT = -1,
-  RIGHT = 1
-}
-
 export enum EventType {
   DATA_LOADED = 'DataLoaded',
   END_TURN = 'EndTurn',
@@ -32,17 +24,17 @@ export enum EventType {
   PAWN_MOVED = 'PawnMoved'
 }
 
-export enum StageType {
-  PLAY = 'Stage_Play',
-  WAIT = 'Stage_Wait'
-}
+/**
+ * UI types
+ */
 
-export enum PhaseType {
-  PLAY = 'Phase_Play'
-}
+export type Coords = Array<number>
 
-export enum MoveType {
-  MOVE_PAWN = 'MovePawn',
+export enum Direction {
+  TOP = -1,
+  BOTTOM = 1,
+  LEFT = -1,
+  RIGHT = 1
 }
 
 export enum Color {
@@ -86,10 +78,32 @@ export type LinkedCell = Cell & {
   }
 }
 
-export type SimpleBoard = Array<Array<CellStatus>>
+export type UiEvent = { component: string, callback: Callback }
+
+export type Board = Array<Array<CellStatus>>
+
+/**
+ * Game types
+ */
+
+export enum StageType {
+  CHOOSE_MOVE = 'Stage_ChooseMove',
+  MOVE_PAWN = 'Stage',
+  WAIT = 'Stage_Wait'
+}
+
+export enum PhaseType {
+  CHOOSE_COLOR = 'Phase_ChooseColor',
+  PLAY_TURN = 'Phase_PlayTurn'
+}
+
+export enum MoveType {
+  MOVE_PAWN = 'MovePawn',
+  EAT_PAWN = 'EatPawn'
+}
 
 export type GameState = {
-  board: SimpleBoard,
+  board: Board,
   turn: Color
 }
 
@@ -97,8 +111,6 @@ export type GameContext = Ctx
 
 export type GameMoves = Record<string, (...args: any[]) => void>
 
-export type GameEvents = Record<string, unknown>
-
-export type Row = Array<LinkedCell>
-
-export type Board = Array<Row>
+export type GameEvents = {
+  setStage?(newPhase: string): void
+}
