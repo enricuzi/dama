@@ -3,6 +3,7 @@ import { Ctx } from 'boardgame.io'
 /**
  * Common types
  */
+
 export type Callback = (data?: any) => void
 
 export type MaybeNull<T> = T | null
@@ -80,21 +81,20 @@ export type LinkedCell = Cell & {
 
 export type UiEvent = { component: string, callback: Callback }
 
-export type Board = Array<Array<CellStatus>>
+export type Board = Array<Array<LinkedCell>>
 
 /**
  * Game types
  */
 
-export enum StageType {
-  CHOOSE_MOVE = 'Stage_ChooseMove',
-  MOVE_PAWN = 'Stage',
-  WAIT = 'Stage_Wait'
-}
-
 export enum PhaseType {
   CHOOSE_COLOR = 'Phase_ChooseColor',
-  PLAY_TURN = 'Phase_PlayTurn'
+  PLAY_GAME = 'Phase_PlayGame'
+}
+
+export enum StageType {
+  PLAY = 'Stage_Play',
+  WAIT = 'Stage_Wait'
 }
 
 export enum MoveType {
@@ -103,9 +103,11 @@ export enum MoveType {
 }
 
 export type GameState = {
-  board: Board,
+  board: GameBoard,
   turn: Color
 }
+
+export type GameBoard = Array<Array<CellStatus>>
 
 export type GameContext = Ctx
 

@@ -14,7 +14,8 @@ export default {
     log('Ending turn', `player ${ctx.currentPlayer}`)
   },
   activePlayers: {
-    currentPlayer: StageType.CHOOSE_MOVE
+    currentPlayer: StageType.PLAY,
+    others: StageType.WAIT
   },
   stages
 } as TurnConfig<GameState, GameContext>

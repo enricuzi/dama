@@ -3,7 +3,7 @@ import { PhaseMap } from 'boardgame.io'
 import moves from '../moves'
 
 export default {
-  [PhaseType.PLAY_TURN]: {
+  [PhaseType.PLAY_GAME]: {
     moves: {
       [MoveType.MOVE_PAWN]: moves[MoveType.MOVE_PAWN]
     },
