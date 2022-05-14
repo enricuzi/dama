@@ -1,37 +1,16 @@
 import React, { useCallback, useMemo, useState } from 'react'
-import {
-  CellStatus,
-  Color,
-  Direction,
-  GameContext,
-  GameEvents,
-  GameMoves,
-  GameState,
-  LinkedCell,
-  MaybeExists,
-  MaybeNull,
-} from '../../type-defs'
-import { getCellColor, useLogger } from '../../utils'
-import { BoardComponent } from '../../ui/board.component'
+import { CellStatus, Color, Direction, GameState, LinkedCell, MaybeExists, MaybeNull, PawnStatus } from '../type-defs'
+import { getCellColor } from '../utils'
+import { BoardComponent } from './ui/board.component'
 
-export const BoardController = (
-  { G, ctx, moves, events, playerID }:
-  {
-    G: GameState,
-    ctx: GameContext,
-    moves: GameMoves,
-    events: GameEvents,
-    playerID: MaybeNull<string>
-  }) => {
-  const { log } = useLogger(BoardController.name)
+export const GameClient = (
+  { playerID, board: boardState }: GameState) => {
 
-  log('loading', { G, ctx, moves, events, playerID })
-
-  const [board, setBoard] = useState(G.board.map((rowStatus, rowIndex) => rowStatus.map((cellStatus, cellIndex) => {
+  const [board, setBoard] = useState(boardState.map((rowStatus, rowIndex) => rowStatus.map((cellStatus, cellIndex) => {
     const pawn = cellStatus === CellStatus.BLACK || cellStatus === CellStatus.WHITE ? {
       id: `pawn_${rowIndex}-${cellIndex}`,
       color: cellStatus === CellStatus.BLACK ? Color.BLACK : Color.WHITE,
-      isSuperPawn: false
+      status: PawnStatus.SINGLE
     } : null
     const cell: LinkedCell = {
       id: `cell_${rowIndex}-${cellIndex}`,
@@ -156,7 +135,7 @@ export const BoardController = (
   const doMove = (cell: LinkedCell) => {
     if (cellsToUpdate.fromCell) {
       cellsToUpdate.toCell = cell
-      log('Moving pawn', cellsToUpdate)
+      console.log('Moving pawn', cellsToUpdate)
 
       const { coords: fromCoords } = cellsToUpdate.fromCell
       const { coords: toCoords } = cellsToUpdate.toCell
@@ -166,6 +145,7 @@ export const BoardController = (
         board[toCoords[0]][toCoords[1]].pawn = {
           id: pawn.id,
           color: pawn.color,
+          status: PawnStatus.SINGLE
         }
       }
       board[fromCoords[0]][fromCoords[1]].pawn = null
@@ -189,6 +169,6 @@ export const BoardController = (
   addLinkedCells()
 
   return <div>
-    { G.board.length ? <BoardComponent board={board} onClick={onCLick}/> : <span>Loading board...</span> }
+    { board.length ? <BoardComponent board={board} onClick={onCLick}/> : <span>Loading board...</span> }
   </div>
 }

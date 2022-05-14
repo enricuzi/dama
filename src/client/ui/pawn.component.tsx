@@ -1,5 +1,5 @@
 import React from 'react'
-import { Color } from '../type-defs'
+import { Color } from '../../type-defs'
 import './pawn.component.css'
 
 export function PawnComponent ({ color }: { color: Color }) {

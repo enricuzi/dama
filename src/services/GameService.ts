@@ -1,11 +1,14 @@
 import fixture from './game_context_dama.json'
-import { GameState } from '../type-defs'
+import { BoardState, GameState } from '../type-defs'
 
 class GameService {
   data: GameState
 
   constructor () {
-    this.data = fixture.gameContextHolder.context as GameState
+    this.data = {
+      board: fixture.gameContextHolder.context.board as BoardState,
+      playerID: fixture.gameContextHolder.context.turn,
+    }
   }
 
   async save (data: GameState) {
@@ -14,7 +17,10 @@ class GameService {
 
   async load () {
     if (!this.data) {
-      this.data = fixture.gameContextHolder.context as GameState
+      this.data = {
+        board: fixture.gameContextHolder.context.board as BoardState,
+        playerID: fixture.gameContextHolder.context.turn,
+      }
     }
     return this.data
   }

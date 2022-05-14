@@ -1,5 +1,3 @@
-import { Ctx } from 'boardgame.io'
-
 /**
  * Common types
  */
@@ -11,6 +9,8 @@ export type MaybeNull<T> = T | null
 export type MaybeUndefined<T> = T | undefined
 
 export type MaybeExists<T> = T | null | undefined
+
+export type MaybeDefault<T, D> = T | D
 
 export type MaybeEmpty<Array> = Array | []
 
@@ -24,6 +24,8 @@ export enum EventType {
   ALLOW_MOVE_END = 'AllowMoveEnd',
   PAWN_MOVED = 'PawnMoved'
 }
+
+export type UiEvent = { component: string, callback: Callback }
 
 /**
  * UI types
@@ -43,10 +45,15 @@ export enum Color {
   WHITE = 'WHITE'
 }
 
+export enum PawnStatus {
+  SINGLE = 'SINGLE',
+  DOUBLE = 'DOUBLE'
+}
+
 export type Pawn = {
   id: string,
   color: Color,
-  isSuperPawn?: boolean
+  status: PawnStatus
 }
 
 export enum CellStatus {
@@ -79,40 +86,11 @@ export type LinkedCell = Cell & {
   }
 }
 
-export type UiEvent = { component: string, callback: Callback }
-
 export type Board = Array<Array<LinkedCell>>
 
-/**
- * Game types
- */
-
-export enum PhaseType {
-  CHOOSE_COLOR = 'Phase_ChooseColor',
-  PLAY_GAME = 'Phase_PlayGame'
-}
-
-export enum StageType {
-  PLAY = 'Stage_Play',
-  WAIT = 'Stage_Wait'
-}
-
-export enum MoveType {
-  MOVE_PAWN = 'MovePawn',
-  EAT_PAWN = 'EatPawn'
-}
+export type BoardState = Array<Array<CellStatus>>
 
 export type GameState = {
-  board: GameBoard,
-  turn: Color
-}
-
-export type GameBoard = Array<Array<CellStatus>>
-
-export type GameContext = Ctx
-
-export type GameMoves = Record<string, (...args: any[]) => void>
-
-export type GameEvents = {
-  setStage?(newPhase: string): void
+  playerID: string,
+  board: BoardState
 }

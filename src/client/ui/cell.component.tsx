@@ -1,6 +1,6 @@
 import React from 'react'
 import { PawnComponent } from './pawn.component'
-import { Callback, Cell, CellStatus } from '../type-defs'
+import { Callback, Cell, CellStatus } from '../../type-defs'
 import './cell.component.css'
 
 export function CellComponent ({ cell, onClick }: { cell: Cell, onClick: Callback }) {

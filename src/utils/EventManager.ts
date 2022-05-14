@@ -1,4 +1,3 @@
-import { useLogger } from '../utils'
 import { Callback, UiEvent } from '../type-defs'
 
 export const useEvents = (component: string) => {
@@ -21,13 +20,13 @@ class EventManager {
       this.events[eventType] = []
     }
     if (this.events[eventType].some((event) => event.component === component)) {
-      return useLogger(component).error('Already registered same event', eventType)
+      return console.error(component, 'Already registered same event', eventType)
     }
     this.events[eventType].push({
       component: component,
       callback
     })
-    useLogger(component).log('Added event listener', eventType, { ...this.events })
+    console.log(component, 'Added event listener', eventType, { ...this.events })
   }
 
   static onAll (eventTypes: Array<string>, callback: Callback, component: string) {
@@ -64,17 +63,17 @@ class EventManager {
   static off (eventType: string, component: string) {
     if (this.events[eventType]) {
       this.events[eventType] = this.events[eventType].filter((event) => event.component !== component)
-      useLogger(component).log('Removed event listener', eventType, { ...this.events })
+      console.log(component, 'Removed event listener', eventType, { ...this.events })
     }
   }
 
   static trigger (eventType: string, data: unknown, component: string) {
-    useLogger(component).log(`firing event ${eventType}`, data)
+    console.log(component, `firing event ${eventType}`, data)
     this.events[eventType] && this.events[eventType].forEach((event) => event.callback(data))
   }
 
   static triggerAll (eventTypes: Array<string>, data: unknown, component: string) {
-    useLogger(component).log(`firing event ${eventTypes}`, data)
+    console.log(component, `firing event ${eventTypes}`, data)
     eventTypes.forEach((eventType) => {
       this.events[eventType] && this.events[eventType].forEach((event) => event.callback(data))
     })
