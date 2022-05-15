@@ -14,7 +14,7 @@ function App() {
   }, [])
 
   const createAppClient = useCallback(() => {
-    return <GameClient playerID={gameState.playerID} board={gameState.board}/>
+    return <GameClient playerID={gameState?.playerID} board={gameState?.board}/>
   }, [gameState])
 
   const { trigger } = useEvents(App.name)

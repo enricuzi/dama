@@ -1,7 +1,17 @@
-import React, { useCallback, useMemo, useState } from 'react'
-import { CellStatus, Color, Direction, GameState, LinkedCell, MaybeExists, MaybeNull, PawnStatus } from '../type-defs'
-import { getCellColor } from '../utils'
-import { BoardComponent } from './ui/board.component'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import {
+  CellStatus,
+  Color,
+  Direction,
+  EventType,
+  GameState,
+  LinkedCell,
+  MaybeExists,
+  MaybeNull,
+  PawnStatus,
+} from '../type-defs'
+import { getCellColor, useEvents } from '../utils'
+import { BoardComponent } from './ui/board/board.component'
 
 export const GameClient = (
   { playerID, board: boardState }: GameState) => {
@@ -32,6 +42,8 @@ export const GameClient = (
     return cell
   })))
 
+  const { on } = useEvents(GameClient.name)
+
   const addLinkedCells = useCallback(() => {
     board.forEach((row: LinkedCell[], rowIndex: number) => row.map((cell, cellIndex) => {
       const prevRow = board[rowIndex - 1]
@@ -61,17 +73,6 @@ export const GameClient = (
 
   const drawBoard = () => setBoard(board.map((row) => row))
 
-  const onCLick = (cell: LinkedCell) => {
-    if (cell.pawn) {
-      cellsToUpdate.fromCell = cell
-      cellsToUpdate.toCell = null
-      cellsToUpdate.toEat = null
-      showMoves(cell)
-    } else {
-      doMove(cell)
-    }
-  }
-
   const showMoves = (cell: LinkedCell) => {
     availableCells.cells.forEach((cell) => {
       cell.status = CellStatus.EMPTY
@@ -95,7 +96,13 @@ export const GameClient = (
     bottomLeft && availableCells.cells.push(bottomLeft)
     bottomRight && availableCells.cells.push(bottomRight)
 
-    filterOnlyEatMoves()
+    if (availableCells.hasToEat) {
+      availableCells.cells.forEach((cell) => {
+        if (cell.status !== CellStatus.PAWN_OPPONENT && cellsToUpdate.fromCell && areCellsConnected(cellsToUpdate.fromCell, cell)) {
+          cell.status = CellStatus.EMPTY
+        }
+      })
+    }
   }
 
   const checkMoves = (cell: LinkedCell) => (rowDirection: Direction, columnDirection: Direction): MaybeExists<LinkedCell> => {
@@ -122,16 +129,6 @@ export const GameClient = (
     }
   }
 
-  const filterOnlyEatMoves = () => {
-    if (availableCells.hasToEat) {
-      availableCells.cells.forEach((cell) => {
-        if (cell.status !== CellStatus.PAWN_OPPONENT && cellsToUpdate.fromCell && areCellsConnected(cellsToUpdate.fromCell, cell)) {
-          cell.status = CellStatus.EMPTY
-        }
-      })
-    }
-  }
-
   const doMove = (cell: LinkedCell) => {
     if (cellsToUpdate.fromCell) {
       cellsToUpdate.toCell = cell
@@ -155,20 +152,47 @@ export const GameClient = (
         board[eatCoords[0]][eatCoords[1]].pawn = null
       }
 
-      clearAvailables()
-    }
-  }
+      availableCells.cells.forEach((cell) => {
+        cell.status = CellStatus.EMPTY
+      })
 
-  const clearAvailables = () => {
-    availableCells.cells.forEach((cell) => {
-      cell.status = CellStatus.EMPTY
-    })
-    drawBoard()
+      // TODO: call POST /checkers/games/{id}/move target === current cell coords, moves === array of cells coords
+      /*
+      {
+        target: { x: fromCoords[0], y: fromCoords[1] },
+        moves: [
+          { x: eatCoords[0], y: eatCoords[1] },
+          { x: toCoords[0], y: toCoords[1] }
+        ]
+      }
+       */
+      drawBoard()
+    }
   }
 
   addLinkedCells()
 
+  useEffect(() => {
+    on(EventType.CELL_SELECTED, (cell) => {
+      console.log(EventType.CELL_SELECTED, cell)
+    })
+    on(EventType.PAWN_SELECTED, (cell) => {
+      console.log(EventType.CELL_SELECTED, cell)
+    })
+    on(EventType.START_MOVE, (cell) => {
+      console.log(EventType.START_MOVE, cell)
+      cellsToUpdate.fromCell = cell
+      cellsToUpdate.toCell = null
+      cellsToUpdate.toEat = null
+      showMoves(cell)
+    })
+    on(EventType.END_MOVE, (cell) => {
+      console.log(EventType.END_MOVE, cell)
+      doMove(cell)
+    })
+  }, [])
+
   return <div>
-    { board.length ? <BoardComponent board={board} onClick={onCLick}/> : <span>Loading board...</span> }
+    { board.length ? <BoardComponent board={board}/> : <span>Loading board...</span> }
   </div>
 }

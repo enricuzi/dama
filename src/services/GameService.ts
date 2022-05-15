@@ -1,15 +1,7 @@
-import fixture from './game_context_dama.json'
-import { BoardState, GameState } from '../type-defs'
+import { CellStatus, GameResponse, GameState, MaybeNull } from '../type-defs'
 
 class GameService {
-  data: GameState
-
-  constructor () {
-    this.data = {
-      board: fixture.gameContextHolder.context.board as BoardState,
-      playerID: fixture.gameContextHolder.context.turn,
-    }
-  }
+  data: MaybeNull<GameState> = null
 
   async save (data: GameState) {
     this.data = data
@@ -17,10 +9,22 @@ class GameService {
 
   async load () {
     if (!this.data) {
+      const response = await fetch('http://localhost:3001/checkers/games/1')
+      const data = await response.json() as GameResponse
       this.data = {
-        board: fixture.gameContextHolder.context.board as BoardState,
-        playerID: fixture.gameContextHolder.context.turn,
-      }
+        board: data.board.map((row) => row.map((cell) => {
+          if (cell === 'W') {
+            return CellStatus.WHITE
+          }
+          if (cell === 'B') {
+            return CellStatus.BLACK
+          }
+          if (cell === 'X') {
+            return CellStatus.BLOCKED
+          }
+        })),
+        playerID: data.turn,
+      } as GameState
     }
     return this.data
   }

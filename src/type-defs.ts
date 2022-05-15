@@ -17,12 +17,13 @@ export type MaybeEmpty<Array> = Array | []
 export type MaybeReturn<T> = T | void
 
 export enum EventType {
-  DATA_LOADED = 'DataLoaded',
-  END_TURN = 'EndTurn',
-  CELL_CLICKED = 'CellClicked',
-  ALLOW_MOVE_START = 'AllowMoveStart',
-  ALLOW_MOVE_END = 'AllowMoveEnd',
-  PAWN_MOVED = 'PawnMoved'
+  DATA_LOADED = 'DATA_LOADED',
+  END_TURN = 'END_TURN',
+  CELL_SELECTED = 'CELL_SELECTED',
+  PAWN_SELECTED = 'PAWN_SELECTED',
+  START_MOVE = 'START_MOVE',
+  END_MOVE = 'END_MOVE',
+  PAWN_MOVED = 'PAWN_MOVED'
 }
 
 export type UiEvent = { component: string, callback: Callback }
@@ -60,7 +61,7 @@ export enum CellStatus {
   WHITE = 'WHITE',
   BLACK = 'BLACK',
   EMPTY = 'EMPTY',
-  BLOCKED = 'LOCKED',
+  BLOCKED = 'BLOCKED',
   AVAILABLE = 'AVAILABLE',
   PAWN_OPPONENT = 'PAWN_OPPONENT'
 }
@@ -91,6 +92,17 @@ export type Board = Array<Array<LinkedCell>>
 export type BoardState = Array<Array<CellStatus>>
 
 export type GameState = {
-  playerID: string,
+  playerID: MaybeNull<string>,
   board: BoardState
+}
+
+export enum CellResponse {
+  W = 'W',
+  B = 'B',
+  X = 'X'
+}
+
+export type GameResponse = {
+  turn: Color,
+  board: Array<Array<CellResponse>>
 }
