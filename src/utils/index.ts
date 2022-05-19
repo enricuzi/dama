@@ -1,7 +1,7 @@
 import { useLogger } from './Logger'
 import { useEvents } from './EventManager'
 import * as GameRules from './GameRules'
-import { Color, Coords } from '../type-defs'
+import { Color, Coords } from '../types/client-types'
 
 export const flatDoubleArray = <T>(a: Array<Array<T>>) => ([] as Array<T>).concat(...a)
 

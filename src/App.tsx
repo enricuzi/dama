@@ -1,16 +1,16 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import './App.css'
 import { useEvents } from './utils'
-import GameService from './services/GameService'
-import { EventType, GameState } from './type-defs'
+import { EventType, GameState } from './types/client-types'
 import { GameClient } from './client'
+import { useService } from './services/GameService'
 
 function App() {
   const [gameState, setGameState] = useState(null as unknown as GameState)
+  const { get } = useService()
 
-  const loadGameState = useCallback(async () => {
-    const gameService = new GameService()
-    return await gameService.load()
+  const loadGameState = useCallback(async (): Promise<GameState> => {
+    return await get() as GameState
   }, [])
 
   const createAppClient = useCallback(() => {

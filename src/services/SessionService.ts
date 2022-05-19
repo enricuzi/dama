@@ -1,4 +1,4 @@
-import { Color, MaybeUndefined } from '../type-defs'
+import { Color, MaybeUndefined } from '../types/client-types'
 
 export const useSession = () => ({
   session: {

@@ -1,18 +1,12 @@
 import React from 'react'
 import { PawnComponent } from '../pawn/pawn.component'
-import { Cell, CellStatus, EventType } from '../../../type-defs'
+import { Cell, CellStatus, EventType } from '../../../types/client-types'
 import './cell.component.css'
 import { useEvents } from '../../../utils'
 
 export function CellComponent ({ cell }: { cell: Cell }) {
 
   const { trigger } = useEvents(CellComponent.name)
-
-  const color =
-    cell.status === CellStatus.AVAILABLE ||
-    cell.status === CellStatus.PAWN_OPPONENT ||
-    cell.status === CellStatus.BLOCKED
-      ? cell.status : cell.color
 
   const onCellClick = () => {
     if (cell.status !== CellStatus.BLOCKED) {
@@ -26,7 +20,7 @@ export function CellComponent ({ cell }: { cell: Cell }) {
     }
   }
 
-  return <div className={`cell ${color}`} onClick={onCellClick}>
+  return <div className={`cell ${cell.color} ${cell.status}`} onClick={onCellClick}>
     {
       cell.pawn ? <PawnComponent color={cell.pawn.color}/> : null
     }

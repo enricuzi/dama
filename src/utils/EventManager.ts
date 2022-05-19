@@ -1,4 +1,4 @@
-import { Callback, UiEvent } from '../type-defs'
+import { Callback, UiEvent } from '../types/client-types'
 
 export const useEvents = (component: string) => {
   return {

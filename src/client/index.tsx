@@ -9,9 +9,10 @@ import {
   MaybeExists,
   MaybeNull,
   PawnStatus,
-} from '../type-defs'
+} from '../types/client-types'
 import { getCellColor, useEvents } from '../utils'
 import { BoardComponent } from './ui/board/board.component'
+import { useService } from '../services/GameService'
 
 export const GameClient = (
   { playerID, board: boardState }: GameState) => {
@@ -43,6 +44,30 @@ export const GameClient = (
   })))
 
   const { on } = useEvents(GameClient.name)
+  const { getMoves, post } = useService()
+
+  useEffect(() => {
+    getAllowedMoves()
+    on(EventType.CELL_SELECTED, (cell) => {
+      console.log(EventType.CELL_SELECTED, cell)
+    })
+    on(EventType.PAWN_SELECTED, (cell) => {
+      console.log(EventType.CELL_SELECTED, cell)
+    })
+    on(EventType.START_MOVE, async (cell) => {
+      console.log(EventType.START_MOVE, cell)
+      cellsToUpdate.fromCell = cell
+      cellsToUpdate.toCell = null
+      cellsToUpdate.toEat = null
+      showMoves(cell)
+    })
+    on(EventType.END_MOVE, (cell) => {
+      console.log(EventType.END_MOVE, cell)
+      doMove(cell).then(() =>
+        drawBoard()
+      )
+    })
+  }, [])
 
   const addLinkedCells = useCallback(() => {
     board.forEach((row: LinkedCell[], rowIndex: number) => row.map((cell, cellIndex) => {
@@ -56,6 +81,12 @@ export const GameClient = (
     }))
   }, [board])
 
+  const getAllowedMoves = useCallback(async () => {
+    const { moves } = await getMoves()
+    allowedMoves.moves = moves
+    console.log('Getting moves', allowedMoves)
+  }, [])
+
   const cellsToUpdate = useMemo(() => ({
     fromCell: null as MaybeNull<LinkedCell>,
     toCell: null as MaybeNull<LinkedCell>,
@@ -66,6 +97,8 @@ export const GameClient = (
     cells: [],
     hasToEat: false
   }), [])
+
+  const allowedMoves = useMemo(() => ({ moves: [] } as any), [])
 
   const areCellsConnected = useCallback((sourceCell: LinkedCell, targetCell: LinkedCell) => {
     return sourceCell.cells.top.left === targetCell || sourceCell.cells.top.right === targetCell || sourceCell.cells.bottom.left === targetCell || sourceCell.cells.bottom.right === targetCell
@@ -129,7 +162,7 @@ export const GameClient = (
     }
   }
 
-  const doMove = (cell: LinkedCell) => {
+  const doMove = async (cell: LinkedCell) => {
     if (cellsToUpdate.fromCell) {
       cellsToUpdate.toCell = cell
       console.log('Moving pawn', cellsToUpdate)
@@ -156,41 +189,18 @@ export const GameClient = (
         cell.status = CellStatus.EMPTY
       })
 
-      // TODO: call POST /checkers/games/{id}/move target === current cell coords, moves === array of cells coords
-      /*
-      {
+      await post({
         target: { x: fromCoords[0], y: fromCoords[1] },
         moves: [
-          { x: eatCoords[0], y: eatCoords[1] },
           { x: toCoords[0], y: toCoords[1] }
         ]
-      }
-       */
-      drawBoard()
+      }, 'moves')
+
+      await getAllowedMoves()
     }
   }
 
   addLinkedCells()
-
-  useEffect(() => {
-    on(EventType.CELL_SELECTED, (cell) => {
-      console.log(EventType.CELL_SELECTED, cell)
-    })
-    on(EventType.PAWN_SELECTED, (cell) => {
-      console.log(EventType.CELL_SELECTED, cell)
-    })
-    on(EventType.START_MOVE, (cell) => {
-      console.log(EventType.START_MOVE, cell)
-      cellsToUpdate.fromCell = cell
-      cellsToUpdate.toCell = null
-      cellsToUpdate.toEat = null
-      showMoves(cell)
-    })
-    on(EventType.END_MOVE, (cell) => {
-      console.log(EventType.END_MOVE, cell)
-      doMove(cell)
-    })
-  }, [])
 
   return <div>
     { board.length ? <BoardComponent board={board}/> : <span>Loading board...</span> }

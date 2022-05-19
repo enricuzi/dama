@@ -1,5 +1,5 @@
 import React from 'react'
-import { Board } from '../../../type-defs'
+import { Board } from '../../../types/client-types'
 import { CellComponent } from '../cell/cell.component'
 import './board.component.css'
 

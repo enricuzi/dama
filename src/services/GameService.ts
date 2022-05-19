@@ -1,37 +1,47 @@
-import { CellStatus, GameResponse, GameState, MaybeNull } from '../type-defs'
+import { CellStatus, GameResponse, GameState } from '../types/client-types'
+import { GetAvailableMovesResponse } from '../types/server-types'
 
-class GameService {
-  data: MaybeNull<GameState> = null
+const BASE_URL = 'http://localhost:3001/checkers/games/1/'
 
-  async save (data: GameState) {
-    this.data = data
-  }
-
-  async load () {
-    if (!this.data) {
-      const response = await fetch('http://localhost:3001/checkers/games/1')
-      const data = await response.json() as GameResponse
-      this.data = {
-        board: data.board.map((row) => row.map((cell) => {
-          if (cell === 'W') {
-            return CellStatus.WHITE
-          }
-          if (cell === 'B') {
-            return CellStatus.BLACK
-          }
-          if (cell === 'X') {
-            return CellStatus.BLOCKED
-          }
-        })),
-        playerID: data.turn,
-      } as GameState
+export const useService = () => ({
+  async getMoves(): Promise<GetAvailableMovesResponse> {
+    return await getMoves()
+  },
+  async get(path = ''): Promise<GameState | GetAvailableMovesResponse> {
+    if (path === 'moves') {
+      return await getMoves()
     }
-    return this.data
+    return await getGameState()
+  },
+  async post(data: any, path = '') {
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    }
+    const response = await fetch(BASE_URL + path, requestOptions)
+    return await response.json()
   }
+})
 
-  async clear () {
-    return {}
+const getGameState = async (): Promise<GameState> => {
+  const response = await fetch(BASE_URL)
+  const data = await response.json() as GameResponse
+  return {
+    board: data.board.map((row, i) => row.map((cell, j) => {
+      if (cell === 'W') {
+        return CellStatus.WHITE
+      }
+      if (cell === 'B') {
+        return CellStatus.BLACK
+      }
+      return CellStatus.BLOCKED
+    })),
+    playerID: data.turn,
   }
 }
 
-export default GameService
+const getMoves = async (): Promise<GetAvailableMovesResponse> => {
+  const response = await fetch(BASE_URL + 'moves')
+  return await response.json()
+}
